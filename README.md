@@ -45,7 +45,28 @@ repository and avoids granting a public job access to private repository tokens.
 Synthetic failure traces, screenshots, and results stay in that private run under
 `tmp/`. A green discovery check is **not** a passing browser run.
 
-Customer/admin authentication, secure-session lifecycle, streaming, actual model
+## Restricted administrator identity acceptance
+
+`admin-tests/admin-identity.spec.js` and `playwright.admin.config.js` add a separate
+desktop/mobile suite on fixed `http://127.0.0.1:4312`. It refuses to start without
+the `synthetic-admin-identity-v1` response marker, live health, and **503 chat
+readiness**. The admin web example uses the real production router and official
+Shared Auth HTTP SDK against a local synthetic identity authority.
+
+The suite checks anonymous/invalid access, stale MFA, authority outages, and the
+verified-but-restricted console; it must not find enabled execution, raw identity
+claims, visible cookies, browser transcript storage, or a claimed audit receipt.
+It also checks direct form rejection, origin isolation, accessibility, keyboard
+navigation, and viewport overflow without disabling accessibility rules.
+
+Start the private admin web repository's `cargo run --locked --example preview`,
+then run `zed task run admin-browser`. The private admin-web CI executes these
+browsers and retains synthetic evidence. This repository's CI only lints and
+discovers both suites. The public-suite config and fixed port remain unchanged.
+This is **not** acceptance of login issuance, real Shared Auth realm deployment,
+product authorization, admin API execution, or an audit store.
+
+Customer authentication, secure-session lifecycle, streaming, actual model
 providers, persisted support records, and deployed main-org/test-org environments
 still need separate runtime acceptance. Track this slice in
 [issue #1](https://github.com/ores-chat-test/web-server-integration-e2e/issues/1) and
