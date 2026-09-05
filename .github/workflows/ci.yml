@@ -16,3 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: ores-chat-test/.github@45aac3517015fdfe2eee74ac53a6ae7fc397cf04
+  browser-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Install checksum-pinned zed CLI
+        env:
+          ZED_ARCHIVE_SHA256: f87576bc289e43ed647902527e7be70566445d2f1fd11249f067ab35547d4b8a
+        run: |
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/zed.tar.gz" https://github.com/zed-pkg/zed-cli/releases/download/v0.3.0/zed-x86_64-unknown-linux-gnu.tar.gz
+          printf '%s  %s\n' "$ZED_ARCHIVE_SHA256" "$RUNNER_TEMP/zed.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/zed.tar.gz" -C "$RUNNER_TEMP"
+      - name: Validate and discover tests (not browser execution)
+        run: |
+          "$RUNNER_TEMP/zed" validate --json
+          "$RUNNER_TEMP/zed" task list
+          "$RUNNER_TEMP/zed" task run check

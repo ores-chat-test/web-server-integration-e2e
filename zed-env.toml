@@ -1,0 +1,11 @@
+schema = 2
+
+[tasks.check]
+description = "Lint and discover browser tests without claiming runtime acceptance"
+aliases = ["ci"]
+run = ["npm run check"]
+
+[tasks.browser]
+description = "Run public browser assertions against the loopback synthetic fixture"
+depends = ["check"]
+run = ["npm run test:browser"]
