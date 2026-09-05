@@ -9,3 +9,8 @@ run = ["npm run check"]
 description = "Run public browser assertions against the loopback synthetic fixture"
 depends = ["check"]
 run = ["npm run test:browser"]
+
+[tasks.admin-browser]
+description = "Run restricted administrator identity browser assertions against the separate loopback fixture"
+depends = ["check"]
+run = ["npm run test:admin-browser"]

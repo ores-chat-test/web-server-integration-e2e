@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "eslint . && prettier --check . && playwright test --list",
-    "test:browser": "playwright test"
+    "check": "eslint . && prettier --check . && playwright test --list && playwright test --config playwright.admin.config.js --list",
+    "test:browser": "playwright test",
+    "test:admin-browser": "playwright test --config playwright.admin.config.js"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
