@@ -3,3 +3,7 @@ tmp/
 temp/
 .env
 env/dec/
+
+# Repository-local temporary data and authorized Git worktrees
+tmp/worktrees
+temp/worktrees
