@@ -85,9 +85,19 @@ test("replies through the Rust API and carries the conversation into follow-ups"
   await expect(
     page.getByRole("log").getByText(reply, { exact: false }),
   ).toHaveCount(2);
+  expect(await page.evaluate(() => Object.entries(localStorage))).toEqual([]);
+  // HTMX 2.0.8 records only the current path at initialization, even with
+  // history disabled. No transcript, draft, session, or credential may persist.
+  expect(await page.evaluate(() => Object.entries(sessionStorage))).toEqual([
+    ["htmx-current-path-for-history", "/"],
+  ]);
   expect(
-    await page.evaluate(() => [localStorage.length, sessionStorage.length]),
-  ).toEqual([0, 0]);
+    await page.evaluate(() => [
+      window.htmx.config.historyEnabled,
+      window.htmx.config.historyCacheSize,
+    ]),
+  ).toEqual([false, 0]);
+  await expect(page.locator("body")).toHaveAttribute("hx-history", "false");
   expect(await page.context().cookies()).toEqual([]);
 });
 
@@ -253,4 +263,8 @@ test("layout fits the viewport, keyboard navigation works, and axe finds no viol
   await expect(page.getByRole("alert")).toBeVisible();
   const failure = await new AxeBuilder({ page }).analyze();
   expect(failure.violations).toEqual([]);
+  await send(page, "Check the completed exchange");
+  await expect(page.getByRole("log")).toContainText(reply);
+  const completed = await new AxeBuilder({ page }).analyze();
+  expect(completed.violations).toEqual([]);
 });
