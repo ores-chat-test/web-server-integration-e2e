@@ -1,0 +1,22 @@
+[package]
+org = "ores-chat-test"
+name = "web-server-integration-e2e"
+version = "0.1.0"
+description = "Public synthetic browser acceptance and full web trust-plane contracts"
+license = "LicenseRef-Proprietary"
+language = "javascript"
+
+[package.repository]
+vcs = "git"
+url = "https://github.com/ores-chat-test/web-server-integration-e2e"
+
+[targets.repository]
+dir = "."
+adapter = "none"
+
+[publish]
+include_readme = true
+exclude = ["node_modules/**", "tmp/**", "temp/**", ".env", "env/dec/**"]
+
+[scripts]
+test = "npm run check"
